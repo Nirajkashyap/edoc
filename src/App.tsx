@@ -44,7 +44,7 @@ function App() {
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
-            <DevtoolsProvider>
+            {/* <DevtoolsProvider> */}
               <Refine
                 dataProvider={dataProvider(supabaseClient)}
                 liveProvider={liveProvider(supabaseClient)}
@@ -129,6 +129,7 @@ function App() {
                       element={
                         <AuthPage
                           type="login"
+                          providers={[{ name: "google" , label: "Sign in with Google" }]}
                           formProps={{
                             initialValues: {
                               email: "info@refine.dev",
@@ -154,7 +155,7 @@ function App() {
                 <DocumentTitleHandler />
               </Refine>
               <DevtoolsPanel />
-            </DevtoolsProvider>
+            {/* </DevtoolsProvider> */}
           </AntdApp>
         </ColorModeContextProvider>
       </RefineKbarProvider>
