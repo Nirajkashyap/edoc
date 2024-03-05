@@ -36,11 +36,12 @@ import {
   CategoryShow,
 } from "./pages/categories";
 import { supabaseClient } from "./utility";
+const basePath = import.meta.env.BASE_URL;
 
 function App() {
   return (
-    <BrowserRouter>
-      <GitHubBanner />
+    <BrowserRouter basename={basePath}>
+      
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
