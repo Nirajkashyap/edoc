@@ -25,7 +25,7 @@ import { ThemedLayoutV2 } from "./components/layout";
 import { ThemedHeaderV2 } from "./components/layout/header";                   
 import { ThemedSiderV2 } from "./components/layout/sider";                     
 import { ThemedTitleV2 } from "./components/layout/title"; 
-import { Header } from "./components/header";
+import { Header } from "./components/layout/header2";
 
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import {
