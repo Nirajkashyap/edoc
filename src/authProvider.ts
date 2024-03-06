@@ -3,7 +3,7 @@ import { AuthBindings } from '@refinedev/core';
 
 const authProvider: any = (supabaseClient: any) => {
   return {
-    login: async ({ email, password, providerName }) => {
+    login: async ({ email, password, providerName, phoneNumber, otp, otpPhoneNumber }) => {
       // sign in with oauth
       try {
         if (providerName) {
@@ -24,6 +24,60 @@ const authProvider: any = (supabaseClient: any) => {
               redirectTo: '/',
             };
           }
+        }
+        if(phoneNumber){
+          let { data, error } = await supabaseClient.auth.signInWithOtp({
+            phone: phoneNumber
+          })
+          if (error) {
+            return {
+              success: false,
+              error,
+            };
+          }
+          if(data){
+            sessionStorage.setItem('phoneNumber', phoneNumber);
+            return {
+              success: true,
+              redirectTo: "/verifyotp",
+              successNotification: {
+                message: "OTP SENT Successful",
+                description: "You have successfully logged in.",
+              },
+              
+              
+            };
+          }
+        }
+
+        if(otp){
+          
+          let { data, error } = await supabaseClient.auth.verifyOtp({
+            phone: otpPhoneNumber,
+            token: otp,
+            type: 'sms'
+          })
+          if (error) {
+            
+            return {
+              success: false,
+              error,
+            };
+          }
+          if(data){
+            
+            return {
+              success: true,
+              redirectTo: "/",
+              successNotification: {
+                message: "OTP verified Successful",
+                description: "You have successfully logged in.",
+              },
+              
+              
+            };
+          }
+
         }
 
         // sign in with email and password

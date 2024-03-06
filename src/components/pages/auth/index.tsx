@@ -35,8 +35,8 @@ export const AuthPage: React.FC<AuthProps> = (props) => {
   const { type } = props;
   const renderView = () => {
     switch (type) {
-      case 'register':
-        return <RegisterPage {...props} />;
+      // case 'register':
+      //   return <RegisterPage {...props} />;
       case 'forgotPassword':
         return <ForgotPasswordPage {...props} />;
       case 'updatePassword':

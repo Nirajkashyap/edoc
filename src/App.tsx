@@ -1,4 +1,4 @@
-import { Authenticated, GitHubBanner, Refine } from "@refinedev/core";
+import { Authenticated,  Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
@@ -40,6 +40,7 @@ import {
   CategoryList,
   CategoryShow,
 } from "./pages/categories";
+import { VerifyPage } from "./components/pages/auth/components/verifyotp";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -148,18 +149,13 @@ function App() {
                         <AuthPage
                           type="login"
                           providers={[{ name: "google" , label: "Sign in with Google" }]}
-                          formProps={{
-                            initialValues: {
-                              email: "info@refine.dev",
-                              password: "refine-supabase",
-                            },
-                          }}
+                          
                         />
                       }
                     />
                     <Route
-                      path="/register"
-                      element={<AuthPage type="register" />}
+                      path="/verifyotp"
+                      element={<VerifyPage />}
                     />
                     <Route
                       path="/forgot-password"

@@ -31,15 +31,16 @@ import {
   layoutStyles,
   titleStyles,
 } from './styles';
-import { ThemedTitleV2 } from './../../../layout/title';
+import { ThemedTitleV2 } from '../../../layout/title';
+import { truncate } from 'fs';
 
-type LoginProps = LoginPageProps<LayoutProps, CardProps, FormProps>;
+type VerifyProps = LoginPageProps<LayoutProps, CardProps, FormProps>;
 /**
  * **refine** has a default login page form which is served on `/login` route when the `authProvider` configuration is provided.
  *
  * @see {@link https://refine.dev/docs/ui-frameworks/antd/components/antd-auth-page/#login} for more details.
  */
-export const LoginPage: React.FC<LoginProps> = ({
+export const VerifyPage: React.FC<VerifyProps> = ({
   providers,
   registerLink,
   forgotPasswordLink,
@@ -52,8 +53,7 @@ export const LoginPage: React.FC<LoginProps> = ({
   hideForm,
 }) => {
   const { token } = theme.useToken();
-  const [emailform] = Form.useForm<LoginFormTypes>();
-  const [phoneform] = Form.useForm<LoginFormTypes>();
+  const [form] = Form.useForm<LoginFormTypes>();
   const translate = useTranslate();
   const routerType = useRouterType();
   const Link = useLink();
@@ -66,6 +66,7 @@ export const LoginPage: React.FC<LoginProps> = ({
   const { mutate: login, isLoading } = useLogin<LoginFormTypes>({
     v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
   });
+  
 
   const PageTitle =
     title === false ? null : (
@@ -153,8 +154,7 @@ export const LoginPage: React.FC<LoginProps> = ({
       {
         <Form<LoginFormTypes>
           layout="vertical"
-          form={phoneform}
-          name={'otp'}
+          form={form}
           onFinish={(values) =>
             login(
               { ...values },
@@ -177,15 +177,15 @@ export const LoginPage: React.FC<LoginProps> = ({
           {...formProps}
         >
           <Form.Item
-            name="phoneNumber"
-            label={translate('pages.login.fields.phoneNumber', 'Phone Number')}
+            name="otp"
+            label={translate('pages.login.fields.otp', 'One Time Pin')}
             rules={[
               { required: true },
               {
                 type: 'string',
                 message: translate(
-                  'pages.login.errors.validPhoneNumber',
-                  'Invalid Phone Number'
+                  'pages.login.errors.otp',
+                  'Invalid OTP'
                 ),
               },
             ]}
@@ -193,9 +193,23 @@ export const LoginPage: React.FC<LoginProps> = ({
             <Input
               size="large"
               placeholder={translate(
-                'pages.login.fields.phone',
-                'Phone Number'
+                'pages.login.fields.otp',
+                'OTP'
               )}
+            />
+          </Form.Item>
+          <Form.Item
+            name="otpPhoneNumber"
+            label={translate('pages.login.fields.password', 'otpPhoneNumber')}
+            hidden={true}
+            initialValue={sessionStorage.getItem('phoneNumber')}
+           
+          >
+            <Input
+              type="large"
+              placeholder=""
+              size="large"
+              hidden={true}
             />
           </Form.Item>
 
@@ -208,113 +222,13 @@ export const LoginPage: React.FC<LoginProps> = ({
                 loading={isLoading}
                 block
               >
-                {translate('pages.login.signin', 'Login With OTP')}
+                {translate('pages.login.verify', 'Verify OTP')}
               </Button>
             </Form.Item>
           )}
         </Form>
       }
-      <Divider>
-        <Typography.Text
-          style={{
-            color: token.colorTextLabel,
-          }}
-        >
-          {translate('pages.login.divider', 'or')}
-        </Typography.Text>
-      </Divider>
-      {!hideForm && (
-        <Form<LoginFormTypes>
-          layout="vertical"
-          form={emailform}
-          name={'email'}
-          onFinish={(values) => login(values)}
-          requiredMark={false}
-          initialValues={{
-            remember: false,
-          }}
-          {...formProps}
-        >
-          <Form.Item
-            name="email"
-            label={translate('pages.login.fields.email', 'Email')}
-            rules={[
-              { required: true },
-              {
-                type: 'email',
-                message: translate(
-                  'pages.login.errors.validEmail',
-                  'Invalid email address'
-                ),
-              },
-            ]}
-          >
-            <Input
-              size="large"
-              placeholder={translate('pages.login.fields.email', 'Email')}
-            />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            label={translate('pages.login.fields.password', 'Password')}
-            rules={[{ required: true }]}
-          >
-            <Input
-              type="password"
-              autoComplete="current-password"
-              placeholder="●●●●●●●●"
-              size="large"
-            />
-          </Form.Item>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginBottom: '24px',
-            }}
-          >
-            {rememberMe ?? (
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox
-                  style={{
-                    fontSize: '12px',
-                  }}
-                >
-                  {translate('pages.login.buttons.rememberMe', 'Remember me')}
-                </Checkbox>
-              </Form.Item>
-            )}
-            {forgotPasswordLink ?? (
-              <ActiveLink
-                style={{
-                  color: token.colorPrimaryTextHover,
-                  fontSize: '12px',
-                  marginLeft: 'auto',
-                }}
-                to="/forgot-password"
-              >
-                {translate(
-                  'pages.login.buttons.forgotPassword',
-                  'Forgot password?'
-                )}
-              </ActiveLink>
-            )}
-          </div>
-          {!hideForm && (
-            <Form.Item>
-              <Button
-                type="primary"
-                size="large"
-                htmlType="submit"
-                loading={isLoading}
-                block
-              >
-                {translate('pages.login.signin', 'Sign in')}
-              </Button>
-            </Form.Item>
-          )}
-        </Form>
-      )}
+     
     </Card>
   );
 
