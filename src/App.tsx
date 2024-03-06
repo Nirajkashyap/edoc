@@ -5,8 +5,7 @@ import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import {
   AuthPage,
   ErrorComponent,
-  ThemedLayoutV2,
-  ThemedSiderV2,
+  
   useNotificationProvider,
 } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
@@ -21,7 +20,13 @@ import { dataProvider, liveProvider, createClient} from "./providers/supabase";
 import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import authProvider from "./authProvider";
+
+import { ThemedLayoutV2 } from "./components/layout";                          
+import { ThemedHeaderV2 } from "./components/layout/header";                   
+import { ThemedSiderV2 } from "./components/layout/sider";                     
+import { ThemedTitleV2 } from "./components/layout/title"; 
 import { Header } from "./components/header";
+
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import {
   BlogPostCreate,
@@ -102,7 +107,7 @@ function App() {
                       >
                         <ThemedLayoutV2
                           Header={() => <Header sticky />}
-                          Sider={(props) => <ThemedSiderV2 {...props} fixed />}
+                          Sider={(props) => <ThemedSiderV2 {...props} fixed  Title={ThemedTitleV2}/>}
                         >
                           <Outlet />
                         </ThemedLayoutV2>
