@@ -17,7 +17,7 @@ import routerBindings, {
   NavigateToResource,
   UnsavedChangesNotifier,
 } from "@refinedev/react-router-v6";
-import { dataProvider, liveProvider } from "@refinedev/supabase";
+import { dataProvider, liveProvider, createClient} from "./providers/supabase";  
 import { App as AntdApp } from "antd";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import authProvider from "./authProvider";
@@ -35,7 +35,19 @@ import {
   CategoryList,
   CategoryShow,
 } from "./pages/categories";
-import { supabaseClient } from "./utility";
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+  db: {
+    schema: "public",
+  },
+  auth: {
+    persistSession: true,
+  },
+});
+
 const basePath = import.meta.env.BASE_URL;
 
 function App() {
@@ -49,7 +61,7 @@ function App() {
               <Refine
                 dataProvider={dataProvider(supabaseClient)}
                 liveProvider={liveProvider(supabaseClient)}
-                authProvider={authProvider}
+                authProvider={authProvider(supabaseClient)}
                 routerProvider={routerBindings}
                 notificationProvider={useNotificationProvider}
                 resources={[
