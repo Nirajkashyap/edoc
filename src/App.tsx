@@ -2,10 +2,10 @@ import { Authenticated, GitHubBanner, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 
-import {
-  AuthPage,
+import { AuthPage } from "./components/pages/auth";
+
+import {  
   ErrorComponent,
-  
   useNotificationProvider,
 } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";

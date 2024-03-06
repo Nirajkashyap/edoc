@@ -1,203 +1,283 @@
-import React, { useState } from 'react';
+import React from "react";
 import {
-  LoginPageProps,
-  LoginFormTypes,
-  useRouterContext,
-  useLink,
-  useRouterType,
-  useLogin,
-  useTranslate,
-  useActiveAuthProvider,
-} from '@refinedev/core';
+    LoginPageProps,
+    LoginFormTypes,
+    useLink,
+    useRouterType,
+    useActiveAuthProvider,
+} from "@refinedev/core";
+import {
+    Row,
+    Col,
+    Layout,
+    Card,
+    Typography,
+    Form,
+    Input,
+    Button,
+    Checkbox,
+    CardProps,
+    LayoutProps,
+    Divider,
+    FormProps,
+    theme,
+} from "antd";
+import { useLogin, useTranslate, useRouterContext } from "@refinedev/core";
 
-type DivPropsType = React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
->;
-type FormPropsType = React.DetailedHTMLProps<
-  React.FormHTMLAttributes<HTMLFormElement>,
-  HTMLFormElement
->;
+import {
+    bodyStyles,
+    containerStyles,
+    headStyles,
+    layoutStyles,
+    titleStyles,
+} from "./styles";
+import { ThemedTitleV2 } from "./../../../layout/title";
 
-type LoginProps = LoginPageProps<DivPropsType, DivPropsType, FormPropsType>;
-
+type LoginProps = LoginPageProps<LayoutProps, CardProps, FormProps>;
+/**
+ * **refine** has a default login page form which is served on `/login` route when the `authProvider` configuration is provided.
+ *
+ * @see {@link https://refine.dev/docs/ui-frameworks/antd/components/antd-auth-page/#login} for more details.
+ */
 export const LoginPage: React.FC<LoginProps> = ({
-  providers,
-  registerLink,
-  forgotPasswordLink,
-  rememberMe,
-  contentProps,
-  wrapperProps,
-  renderContent,
-  formProps,
-  title = undefined,
-  hideForm,
+    providers,
+    registerLink,
+    forgotPasswordLink,
+    rememberMe,
+    contentProps,
+    wrapperProps,
+    renderContent,
+    formProps,
+    title,
+    hideForm,
 }) => {
-  const routerType = useRouterType();
-  const Link = useLink();
-  const { Link: LegacyLink } = useRouterContext();
+    const { token } = theme.useToken();
+    const [form] = Form.useForm<LoginFormTypes>();
+    const translate = useTranslate();
+    const routerType = useRouterType();
+    const Link = useLink();
+    const { Link: LegacyLink } = useRouterContext();
 
-  const ActiveLink = routerType === 'legacy' ? LegacyLink : Link;
+    const ActiveLink = routerType === "legacy" ? LegacyLink : Link;
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [remember, setRemember] = useState(false);
+    const authProvider = useActiveAuthProvider();
+    const { mutate: login, isLoading } = useLogin<LoginFormTypes>({
+        v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
+    });
 
-  const translate = useTranslate();
-
-  const authProvider = useActiveAuthProvider();
-  const { mutate: login } = useLogin<LoginFormTypes>({
-    v3LegacyAuthProviderCompatible: Boolean(authProvider?.isLegacy),
-  });
-
-  const renderLink = (link: string, text?: string) => {
-    return <ActiveLink to={link}>{text}</ActiveLink>;
-  };
-
-  const renderProviders = () => {
-    if (providers) {
-      return providers.map((provider) => (
-        <div
-          key={provider.name}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: '1rem',
-          }}
-        >
-          <button
-            onClick={() =>
-              login({
-                providerName: provider.name,
-              })
-            }
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            {provider?.icon}
-            {provider.label ?? <label>{provider.label}</label>}
-          </button>
-        </div>
-      ));
-    }
-    return null;
-  };
-
-  const content = (
-    <div {...contentProps}>
-      <h1 style={{ textAlign: 'center' }}>
-        {translate('pages.login.title', 'Sign in to your account')}
-      </h1>
-      {renderProviders()}
-      {!hideForm && (
-        <>
-          <hr />
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              login({ email, password, remember });
-            }}
-            {...formProps}
-          >
+    const PageTitle =
+        title === false ? null : (
             <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                padding: 25,
-              }}
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginBottom: "32px",
+                    fontSize: "20px",
+                }}
             >
-              <label htmlFor="email-input">
-                {translate('pages.login.fields.email', 'Email')}
-              </label>
-              <input
-                id="email-input"
-                name="email"
-                type="text"
-                size={20}
-                autoCorrect="off"
-                spellCheck={false}
-                autoCapitalize="off"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <label htmlFor="password-input">
-                {translate('pages.login.fields.password', 'Password')}
-              </label>
-              <input
-                id="password-input"
-                type="password"
-                name="password"
-                required
-                size={20}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              {rememberMe ?? (
-                <>
-                  <label htmlFor="remember-me-input">
-                    {translate('pages.login.buttons.rememberMe', 'Remember me')}
-                    <input
-                      id="remember-me-input"
-                      name="remember"
-                      type="checkbox"
-                      size={20}
-                      checked={remember}
-                      value={remember.toString()}
-                      onChange={() => {
-                        setRemember(!remember);
-                      }}
-                    />
-                  </label>
-                </>
-              )}
-              <br />
-              {forgotPasswordLink ??
-                renderLink(
-                  '/forgot-password',
-                  translate(
-                    'pages.login.buttons.forgotPassword',
-                    'Forgot password?'
-                  )
-                )}
-              <input
-                type="submit"
-                value={translate('pages.login.signin', 'Sign in')}
-              />
-              {registerLink ?? (
-                <span>
-                  {translate(
-                    'pages.login.buttons.noAccount',
-                    'Don’t have an account?'
-                  )}{' '}
-                  {renderLink(
-                    '/register',
-                    translate('pages.login.register', 'Sign up')
-                  )}
-                </span>
-              )}
+                {title ?? <ThemedTitleV2 collapsed={false} />}
             </div>
-          </form>
-        </>
-      )}
-      {registerLink !== false && hideForm && (
-        <div style={{ textAlign: 'center' }}>
-          {translate('pages.login.buttons.noAccount', 'Don’t have an account?')}{' '}
-          {renderLink(
-            '/register',
-            translate('pages.login.register', 'Sign up')
-          )}
-        </div>
-      )}
-    </div>
-  );
+        );
 
-  return (
-    <div {...wrapperProps}>
-      {renderContent ? renderContent(content, title) : content}
-    </div>
-  );
+    const CardTitle = (
+        <Typography.Title
+            level={3}
+            style={{
+                color: token.colorPrimaryTextHover,
+                ...titleStyles,
+            }}
+        >
+            {translate("pages.login.title", "Sign in to your account")}
+        </Typography.Title>
+    );
+
+    const renderProviders = () => {
+        if (providers && providers.length > 0) {
+            return (
+                <>
+                    {providers.map((provider) => {
+                        return (
+                            <Button
+                                key={provider.name}
+                                type="default"
+                                block
+                                icon={provider.icon}
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    width: "100%",
+                                    marginBottom: "8px",
+                                }}
+                                onClick={() =>
+                                    login({
+                                        providerName: provider.name,
+                                    })
+                                }
+                            >
+                                {provider.label}
+                            </Button>
+                        );
+                    })}
+                    {!hideForm && (
+                        <Divider>
+                            <Typography.Text
+                                style={{
+                                    color: token.colorTextLabel,
+                                }}
+                            >
+                                {translate("pages.login.divider", "or")}
+                            </Typography.Text>
+                        </Divider>
+                    )}
+                </>
+            );
+        }
+        return null;
+    };
+
+    const CardContent = (
+        <Card
+            title={CardTitle}
+            headStyle={headStyles}
+            bodyStyle={bodyStyles}
+            style={{
+                ...containerStyles,
+                backgroundColor: token.colorBgElevated,
+            }}
+            {...(contentProps ?? {})}
+        >
+            {renderProviders()}
+            {!hideForm && (
+                <Form<LoginFormTypes>
+                    layout="vertical"
+                    form={form}
+                    onFinish={(values) => login(values)}
+                    requiredMark={false}
+                    initialValues={{
+                        remember: false,
+                    }}
+                    {...formProps}
+                >
+                    <Form.Item
+                        name="email"
+                        label={translate("pages.login.fields.email", "Email")}
+                        rules={[
+                            { required: true },
+                            {
+                                type: "email",
+                                message: translate(
+                                    "pages.login.errors.validEmail",
+                                    "Invalid email address",
+                                ),
+                            },
+                        ]}
+                    >
+                        <Input
+                            size="large"
+                            placeholder={translate(
+                                "pages.login.fields.email",
+                                "Email",
+                            )}
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        name="password"
+                        label={translate(
+                            "pages.login.fields.password",
+                            "Password",
+                        )}
+                        rules={[{ required: true }]}
+                    >
+                        <Input
+                            type="password"
+                            autoComplete="current-password"
+                            placeholder="●●●●●●●●"
+                            size="large"
+                        />
+                    </Form.Item>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            marginBottom: "24px",
+                        }}
+                    >
+                        {rememberMe ?? (
+                            <Form.Item
+                                name="remember"
+                                valuePropName="checked"
+                                noStyle
+                            >
+                                <Checkbox
+                                    style={{
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    {translate(
+                                        "pages.login.buttons.rememberMe",
+                                        "Remember me",
+                                    )}
+                                </Checkbox>
+                            </Form.Item>
+                        )}
+                        {forgotPasswordLink ?? (
+                            <ActiveLink
+                                style={{
+                                    color: token.colorPrimaryTextHover,
+                                    fontSize: "12px",
+                                    marginLeft: "auto",
+                                }}
+                                to="/forgot-password"
+                            >
+                                {translate(
+                                    "pages.login.buttons.forgotPassword",
+                                    "Forgot password?",
+                                )}
+                            </ActiveLink>
+                        )}
+                    </div>
+                    {!hideForm && (
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                size="large"
+                                htmlType="submit"
+                                loading={isLoading}
+                                block
+                            >
+                                {translate("pages.login.signin", "Sign in")}
+                            </Button>
+                        </Form.Item>
+                    )}
+                </Form>
+            )}
+
+        </Card>
+    );
+
+    return (
+        <Layout style={layoutStyles} {...(wrapperProps ?? {})}>
+            <Row
+                justify="center"
+                align={hideForm ? "top" : "middle"}
+                style={{
+                    padding: "16px 0",
+                    minHeight: "100dvh",
+                    paddingTop: hideForm ? "15dvh" : "16px",
+                }}
+            >
+                <Col xs={22}>
+                    {renderContent ? (
+                        renderContent(CardContent, PageTitle)
+                    ) : (
+                        <>
+                            {PageTitle}
+                            {CardContent}
+                        </>
+                    )}
+                </Col>
+            </Row>
+        </Layout>
+    );
 };
