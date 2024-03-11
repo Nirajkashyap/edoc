@@ -15,7 +15,7 @@ import routerBindings, {
 } from '@refinedev/react-router-v6';
 import { dataProvider, liveProvider, createClient } from './providers/supabase';
 import { App as AntdApp } from 'antd';
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { createHashRouter, HashRouter, BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import authProvider from './authProvider';
 
 import { ThemedLayoutV2 } from './components/layout';
@@ -55,8 +55,10 @@ export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
 const basePath = import.meta.env.BASE_URL;
 
 function App() {
+  // const HashRouter = createHashRouter();
+  
   return (
-    <BrowserRouter basename={basePath}>
+    <HashRouter>
       <RefineKbarProvider>
         <ColorModeContextProvider>
           <AntdApp>
@@ -187,7 +189,7 @@ function App() {
           </AntdApp>
         </ColorModeContextProvider>
       </RefineKbarProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
