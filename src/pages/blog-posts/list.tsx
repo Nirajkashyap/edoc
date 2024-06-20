@@ -10,8 +10,10 @@ import {
 import { BaseRecord, IResourceComponentsProps, useMany } from "@refinedev/core";
 import { Space, Table } from "antd";
 import React from "react";
+import { trpc } from "./../../trpc"
 
 export const BlogPostList: React.FC<IResourceComponentsProps> = () => {
+  const userQuery1 = trpc.post.hello.useQuery();
   const { tableProps } = useTable({
     syncWithLocation: true,
     meta: {

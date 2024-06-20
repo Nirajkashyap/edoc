@@ -23,6 +23,7 @@ import {
   theme,
 } from 'antd';
 import { useLogin, useTranslate, useRouterContext } from '@refinedev/core';
+import { trpc } from './../../../../trpc';
 
 import {
   bodyStyles,
@@ -31,7 +32,7 @@ import {
   layoutStyles,
   titleStyles,
 } from './styles';
-import { ThemedTitleV2 } from './../../../layout/title';
+import { ThemedTitleV2 } from '../../../layout/title';
 
 type LoginProps = LoginPageProps<LayoutProps, CardProps, FormProps>;
 /**
@@ -51,6 +52,8 @@ export const LoginPage: React.FC<LoginProps> = ({
   title,
   hideForm,
 }) => {
+  // const userQuery = trpc.getUser.useQuery({ id: 'id_bilbo' });
+  const userQuery1 = trpc.auth.getSecretMessage.useQuery();
   const { token } = theme.useToken();
   const [emailform] = Form.useForm<LoginFormTypes>();
   const [phoneform] = Form.useForm<LoginFormTypes>();

@@ -32,7 +32,7 @@ import {
     headStyles,
     bodyStyles,
 } from "./styles";
-import { ThemedTitleV2 } from "./../../../layout/title";
+import { ThemedTitleV2 } from "../../../layout/title";
 
 type ResetPassworProps = ForgotPasswordPageProps<
     LayoutProps,
